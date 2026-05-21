@@ -1,0 +1,136 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"ignoreUnknown": false,
+		"maxSize": 2097152,
+		"includes": [
+			"**",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/build",
+			"!**/.next",
+			"!**/.turbo",
+			"!.git",
+			"!.idea",
+			"!.vscode",
+			"!.husky",
+			"!.claude",
+			"!**/migrations",
+			"!**/coverage",
+			"!**/supabase",
+			"!**/*.md",
+			"!pnpm-lock.yaml"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineWidth": 120,
+		"lineEnding": "lf"
+	},
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"correctness": {
+				"useExhaustiveDependencies": "warn",
+				"noUnusedVariables": "error",
+				"noUnusedImports": "error",
+				"noUnusedFunctionParameters": "warn"
+			},
+			"suspicious": {
+				"noExplicitAny": "error",
+				"noConsole": "warn",
+				"noDebugger": "error",
+				"noDoubleEquals": "error",
+				"noEmptyBlockStatements": "warn"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "error",
+				"noGlobalEval": "error"
+			},
+			"complexity": {
+				"noStaticOnlyClass": "off",
+				"noUselessEmptyExport": "warn",
+				"noBannedTypes": "error"
+			},
+			"style": {
+				"noNonNullAssertion": "warn",
+				"noInferrableTypes": "off",
+				"useConst": "error",
+				"useTemplate": "error"
+			},
+			"a11y": {
+				"useKeyWithClickEvents": "warn"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single",
+			"arrowParentheses": "always",
+			"semicolons": "asNeeded",
+			"trailingCommas": "all"
+		}
+	},
+	"css": {
+		"parser": {
+			"cssModules": true,
+			"allowWrongLineComments": true,
+			"tailwindDirectives": true
+		},
+		"linter": {
+			"enabled": true
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["**/*.css"],
+			"css": {
+				"linter": {
+					"enabled": false
+				}
+			}
+		},
+		{
+			"includes": ["services/**", "packages/**"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noConsole": "error"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["scripts/**", "infra/**", "eslint-rules/**"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noConsole": "off"
+					}
+				}
+			}
+		}
+	],
+	"json": {
+		"formatter": {
+			"indentWidth": 2,
+			"trailingCommas": "none"
+		}
+	}
+}

@@ -1,0 +1,28 @@
+export PNPM_HOME="$HOME/Library/pnpm"
+[ -d "$PNPM_HOME" ] && export PATH="$PNPM_HOME:$PATH"
+
+protected_branch="main"
+current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+
+# stdin: <local ref> <local sha> <remote ref> <remote sha> per line
+pushing_branch=false
+while read -r local_ref _local_sha _remote_ref _remote_sha; do
+  case "$local_ref" in
+    refs/tags/v*) ;;
+    refs/tags/*)
+      echo "Only version tags (v*) are allowed. Got: $local_ref"
+      exit 1
+      ;;
+    *) pushing_branch=true ;;
+  esac
+done
+
+if [ "$pushing_branch" = true ] && [ "$current_branch" = "$protected_branch" ] && [ "$FORCE_MAIN" != "1" ]; then
+  echo "Direct push to main is blocked. Use FORCE_MAIN=1 git push to bypass."
+  exit 1
+fi
+
+echo '[husky] pre-push: typecheck + lint + test'
+pnpm typecheck
+pnpm lint
+pnpm test
