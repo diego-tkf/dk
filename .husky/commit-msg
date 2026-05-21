@@ -1,0 +1,4 @@
+export PNPM_HOME="$HOME/Library/pnpm"
+[ -d "$PNPM_HOME" ] && export PATH="$PNPM_HOME:$PATH"
+
+pnpm exec commitlint --edit "$1"
