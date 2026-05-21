@@ -1,0 +1,38 @@
+name: dk
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: dk-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-dk}
+    ports:
+      - '5432:5432'
+    volumes:
+      - dk-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER:-postgres}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: dk-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - dk-redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  dk-postgres-data:
+  dk-redis-data:

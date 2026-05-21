@@ -1,0 +1,22 @@
+{
+	"name": "@dk/audit",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Append-only audit log + withAudit() middleware. Engineering doc §3.2 (non-negotiable) and §7.",
+	"main": "./src/index.ts",
+	"types": "./src/index.ts",
+	"exports": {
+		".": {
+			"types": "./src/index.ts",
+			"import": "./src/index.ts"
+		}
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@dk/db": "workspace:*",
+		"@dk/schemas": "workspace:*"
+	}
+}

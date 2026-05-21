@@ -1,0 +1,10 @@
+{
+	"name": "@dk/scripts",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Internal tooling for dk (lint:isolation, generators, etc.). Not published.",
+	"dependencies": {
+		"tsx": "^4.19.0"
+	}
+}

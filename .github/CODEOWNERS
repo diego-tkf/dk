@@ -1,0 +1,16 @@
+# Default owners for everything in the repo. Replace/extend as the team grows.
+# Syntax: <path-pattern> <user-or-team> [<user-or-team>...]
+# See: https://docs.github.com/en/repositories/managing-your-repositories-settings-and-features/customizing-your-repository/about-code-owners
+
+* @diego-tkf
+
+# Architectural decisions and conventions need an owner who knows the why.
+/docs/decisions/ @diego-tkf
+/openspec/       @diego-tkf
+
+# Touching the audit middleware or the boundary script changes the platform
+# contract — flag explicitly.
+/packages/audit/                 @diego-tkf
+/scripts/src/lint/               @diego-tkf
+/eslint-rules/                   @diego-tkf
+/eslint.config.mjs               @diego-tkf

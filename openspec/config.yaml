@@ -1,0 +1,74 @@
+schema: spec-driven
+
+context: |
+  Project: dk — Keenfolks internal platform for AI-powered creative tools
+  First tool: weekly carousel composer (clients: Axxets ES, Activest EN)
+
+  ## Stack
+  - Language: TypeScript ESM, Node 24+, pnpm + Turborepo
+  - Backend: Next.js 14 route handlers, BullMQ + Redis (self-hosted) workers
+  - Frontend: Next.js 14 App Router, Tailwind v4, shadcn/ui, TanStack Query v5, CVA, react-hook-form
+  - DB: Supabase Postgres + Drizzle ORM, pgvector (later, for memory)
+  - Storage: Supabase Storage (content-addressed via sha256 hashes)
+  - Auth: Supabase Auth (email/password + Microsoft Entra OIDC)
+  - AI: Claude (Anthropic API) for LLM + agent, OpenAI gpt-image-1 for images, Claude vision for compliance
+  - Templates: Puppeteer + HTML/CSS (self-built; no per-render vendor cost)
+  - Tests: Vitest, 85% coverage threshold (per-package include list, expand as packages get tests)
+  - Format/Lint: Biome (format + recommended lint) + ESLint (type-aware + custom architectural rules)
+
+  ## Architectural Non-Negotiables (engineering doc §3)
+  - Schemas-first: every entity has a Zod schema in @dk/schemas. Validation at every boundary.
+  - Audit middleware: every external call goes through @dk/audit's withAudit(). Enforced by ESLint no-restricted-imports forbidding direct openai / @anthropic-ai/sdk / @aws-sdk/* / puppeteer / replicate / sharp imports outside the wrapper package.
+  - Compliance as data: engine knows no laws. Profiles are versioned data with three enforcement layers (prompt, image, text).
+  - Role separation + human-in-the-loop: designer / compliance_reviewer / profile_approver / admin / viewer. Flagged items route to compliance_reviewer, not the designer. Overrides require typed reasons.
+  - Platform as composition of packages: ~20% tool-specific (services/<tool>/), ~80% shared (@dk/* packages). Packages never import from apps or services; services never import from each other directly. Enforced by lint:isolation script.
+
+  ## Backend Conventions
+  - Drizzle query builders always — no raw `sql` except for Postgres-specific features (pgvector, RLS policy SQL)
+  - Method naming: find*() returns T|null, get*() throws if missing, list*() returns arrays. Bans findAll / getAll. (Enforced via custom ESLint rule dk/method-naming-convention.)
+  - Migrations: drizzle-kit generate only, never manual SQL. Output to infra/migrations/.
+  - Event naming: dotted, entity.action shape — image.generate, llm.call, variant.approve. See engineering doc §7.4 for full catalog.
+  - Cross-service calls: never direct imports — communicate via events or shared DB state (engineering doc §5.2).
+
+  ## Frontend Conventions
+  - Feature-sliced: features/<name>/{api,hooks,components,pages}. Pages live in features, not in design system.
+  - api/ layer is pure async functions — no React, no hooks
+  - Atomic: atoms (shadcn primitives) → molecules (custom wrappers) → organisms (feature composites)
+  - Skeletons for every loading state — never return null while loading
+  - Semantic Tailwind tokens only (bg-background, text-foreground) — never bg-gray-*, text-gray-*
+  - CVA for component variants — no ternary className strings
+  - Typed query-keys.ts per feature
+  - shadcn primitives in shared/components/ui/ are not edited — wrap them in molecules instead
+
+  ## Commit Convention
+  - Conventional commits: feat, fix, chore, refactor, docs, test, build, ci, perf, style, revert
+  - Scope: package name (@dk/audit), service name (carousel), or feature name (compliance-review)
+  - Examples: feat(carousel/composer): add wizard step 3; fix(@dk/audit): preserve cause chain in serialize-error
+
+  ## Pre-PR Checklist
+  pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:coverage
+
+  ## Cross-Cutting
+  - Microsoft sign-in: pending Azure app registration (off-platform task)
+  - Email/password auth: enabled now via Supabase Auth for testing
+  - All new users default to role='viewer' via Postgres trigger; admin promotes
+
+rules:
+  proposal:
+    - Always include a Non-goals section
+    - Reference the affected layer: package (@dk/*), service (services/<tool>/), app surface (apps/web/features/<name>/), or infra
+    - Keep under 400 words
+  specs:
+    - Use WHEN/THEN/AND format for all scenarios
+    - Every new API endpoint needs spec scenarios for: success, validation failure, not found, unauthorized
+    - Every new UI component needs spec scenarios for: loaded state, loading state, empty state, error state
+    - Every new external SDK integration needs a scenario verifying the call goes through withAudit (emits start + complete events with correct correlation_id)
+  design:
+    - Always include a Decisions section with rationale
+    - Backend changes: note which package or service layer (schema / db / repository / pipeline step / api route)
+    - Frontend changes: note which atomic level (atom/molecule/organism) and which feature
+    - Compliance-touching changes: cite the relevant profile(s) and which of the three enforcement layers (prompt/image/text) applies
+  tasks:
+    - Break tasks into chunks of max 2 hours
+    - Group by layer: schemas → db → audit → service → api → ui → tests
+    - Always include a verification task at the end (e.g. "verify lint:isolation + tests pass")
