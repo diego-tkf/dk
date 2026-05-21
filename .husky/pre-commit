@@ -1,0 +1,8 @@
+# Make pnpm available regardless of which shell/env git was invoked from
+# (GUI git clients, husky's stripped shell, etc.).
+export PNPM_HOME="$HOME/Library/pnpm"
+[ -d "$PNPM_HOME" ] && export PATH="$PNPM_HOME:$PATH"
+
+echo '[husky] pre-commit'
+./scripts/git-hooks/check-secrets.sh
+pnpm exec lint-staged
