@@ -1,0 +1,50 @@
+version: 2
+
+updates:
+  # npm dependencies (root + every workspace) — weekly group update.
+  # Grouping reduces PR noise vs. one-PR-per-package.
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+    open-pull-requests-limit: 5
+    groups:
+      types:
+        patterns:
+          - '@types/*'
+      dev-tooling:
+        patterns:
+          - 'biome*'
+          - 'eslint*'
+          - '@typescript-eslint/*'
+          - 'typescript'
+          - 'turbo'
+          - 'vitest'
+          - '@vitest/*'
+          - 'husky'
+          - 'lint-staged'
+          - '@commitlint/*'
+      next:
+        patterns:
+          - 'next'
+          - 'react'
+          - 'react-dom'
+          - '@types/react*'
+      supabase:
+        patterns:
+          - '@supabase/*'
+      drizzle:
+        patterns:
+          - 'drizzle-orm'
+          - 'drizzle-kit'
+
+  # GitHub Actions versions
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+    open-pull-requests-limit: 3

@@ -1,0 +1,48 @@
+{
+	"name": "dk",
+	"version": "0.0.0",
+	"private": true,
+	"description": "dk — Keenfolks internal platform for AI-powered creative tools. First tool: weekly carousel composer.",
+	"packageManager": "pnpm@11.2.2",
+	"engines": {
+		"node": ">=24.0.0",
+		"pnpm": ">=11.0.0"
+	},
+	"scripts": {
+		"build": "turbo run build",
+		"dev": "turbo run dev",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"lint": "biome check . && eslint . --no-error-on-unmatched-pattern && node scripts/src/lint/check-isolations.ts",
+		"lint:fix": "biome check --write . && eslint . --fix --no-error-on-unmatched-pattern",
+		"lint:strict": "biome check . && eslint . --max-warnings=0 --no-error-on-unmatched-pattern && node scripts/src/lint/check-isolations.ts",
+		"lint:isolation": "node scripts/src/lint/check-isolations.ts",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"clean": "turbo run clean",
+		"prepare": "husky"
+	},
+	"lint-staged": {
+		"*.{ts,tsx,js,jsx,mjs,json}": [
+			"biome check --write --no-errors-on-unmatched"
+		]
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.15",
+		"@commitlint/cli": "^19.8.1",
+		"@commitlint/config-conventional": "^19.8.1",
+		"@types/node": "^25.9.1",
+		"@typescript-eslint/eslint-plugin": "^8.59.4",
+		"@typescript-eslint/parser": "^8.59.4",
+		"@vitest/coverage-v8": "^4.1.7",
+		"eslint": "^10.4.0",
+		"eslint-plugin-unused-imports": "^4.4.1",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.4.0",
+		"turbo": "^2.8.17",
+		"typescript": "^5.9.3",
+		"vitest": "^4.1.7"
+	}
+}
